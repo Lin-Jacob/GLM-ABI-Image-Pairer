@@ -2,13 +2,13 @@ import cv2
 import numpy as np
 import os
 
-class sift_match:
+class find_match:
     def __init__(self, image_file) -> None:
         self.image_dir = image_file
         self.keypoints = {}
-        self.sift_match()
+        self.find_matches()
     
-    def sift_match(self):
+    def find_matches(self):
         # Step 1: Get list of ABI and GLM images
         abi_images = []
         glm_images = []
@@ -50,7 +50,7 @@ class sift_match:
                 os.makedirs(matched_folder, exist_ok=True)
 
                 matched_abi_img = cv2.imread(best_match)
-                matched_img = cv2.drawMatches(abi_img, abi_keypoints, glm_img, glm_keypoints, good_matches, None)
+                matched_img = cv2.drawMatches(matched_abi_img, abi_keypoints, glm_img, glm_keypoints, good_matches, None)
 
                 glm_filename = os.path.basename(glm_img_path)
                 abi_filename = os.path.basename(best_match)
