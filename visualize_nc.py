@@ -6,9 +6,8 @@ from flask import Flask, render_template_string, send_from_directory
 
 app = Flask(__name__)
 
-# Directory containing the .nc files
 directory = "data"
-output_dir = "images"  # Adjust to use "images" directory
+output_dir = "images"  
 os.makedirs(output_dir, exist_ok=True)
 
 def visualize_nc_file(file_path, output_dir, variable_name):
@@ -25,23 +24,20 @@ def visualize_nc_file(file_path, output_dir, variable_name):
     if "GLM" in file_path:
         data = np.flip(data, axis=0)
 
-    # Plot the data in gray-scale without axes, labels, or colorbar
-    plt.figure(figsize=(data.shape[1]/100, data.shape[0]/100))  # Adjust figsize based on image size
+    plt.figure(figsize=(data.shape[1]/100, data.shape[0]/100)) 
     plt.imshow(data, cmap='gray')
-    plt.axis('off')  # Turn off axes
-    plt.tight_layout()  # Ensure tight layout
+    plt.axis('off') 
+    plt.tight_layout()
 
     # Save the image
     image_file = os.path.join(output_dir, os.path.basename(file_path) + '.png')
-    plt.savefig(image_file, bbox_inches='tight', pad_inches=0, dpi=100)  # Ensure tight bounding box and no padding
+    plt.savefig(image_file, bbox_inches='tight', pad_inches=0, dpi=100)
     plt.close()
 
     return image_file
 
-# List all .nc files in the directory
 nc_files = [file for file in os.listdir(directory) if file.endswith(".nc")]
 
-# Generate images for all .nc files
 image_files = []
 for nc_file in nc_files:
     file_path = os.path.join(directory, nc_file)
@@ -52,7 +48,6 @@ for nc_file in nc_files:
     if image_file:
         image_files.append(image_file)
 
-# HTML template
 html_template = """
 <!DOCTYPE html>
 <html>

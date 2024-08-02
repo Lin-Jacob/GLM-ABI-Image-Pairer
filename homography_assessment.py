@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 import sift_match
-import flann_match
 import matplotlib.pyplot as plt
 import textwrap
 import superpoint_superglue_match

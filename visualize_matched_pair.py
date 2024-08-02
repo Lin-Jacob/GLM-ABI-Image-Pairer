@@ -3,13 +3,10 @@ from flask import Flask, render_template_string, send_from_directory
 
 app = Flask(__name__)
 
-# Directory containing the matched images
 output_dir = "matched_output"
 
-# List all matched image files in the directory
 matched_images = [file for file in os.listdir(output_dir) if file.endswith(".jpg")]
 
-# HTML template
 html_template = """
 <!DOCTYPE html>
 <html>
