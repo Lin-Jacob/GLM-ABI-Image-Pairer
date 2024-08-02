@@ -38,7 +38,7 @@ class find_match:
 
                 good_matches = []
                 for m, n in matches:
-                    if m.distance < 0.65 * n.distance:
+                    if m.distance < 0.75 * n.distance:
                         good_matches.append(m)
 
                 if len(good_matches) > 0:

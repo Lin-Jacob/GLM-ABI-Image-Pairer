@@ -1,13 +1,20 @@
-from PIL import Image
+import cv2
+import matplotlib.pyplot as plt
 
-# Open an image file
-abiImg = Image.open('images/G16_ABI_B03_s20233172000203_e20233172009511_x00000y-02400.nc.png')
-# Get the size of the image
-abiWidth, abiHeight = abiImg.size
+# Load the image
+image = cv2.imread(
+    'images\G16_ABI_B03_s20233172000203_e20233172009511_x00000y-02400.nc.png')
+gray_image = cv2.cvtColor(image, cv2.IMREAD_GRAYSCALE)
 
-glmImg = Image.open('images/G16_GLM_2023_11_13_200402_x-00100y00000.nc.png')
-glmWidth, glmHeight = glmImg.size
+# Intialize SIFT algorithm
+sift = cv2.SIFT_create()
+keypoints, descriptors = sift.detectAndCompute(gray_image, None)
 
-print(f"ABI image width: {abiWidth} pixels, height: {abiHeight} pixels.")
-print(f"GLM image width: {glmWidth} pixels, height: {glmHeight} pixels.")
-print(f"ABI/GLM width: {abiWidth/glmWidth}, ABI/GLM height: {abiHeight/glmHeight}")
+image_with_keypoints = cv2.drawKeypoints(
+    image, keypoints, None, flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+
+# Display the image with keypoints
+plt.imshow(cv2.cvtColor(image_with_keypoints, cv2.COLOR_BGR2RGB))
+plt.title('SIFT Keypoints')
+plt.show()
+

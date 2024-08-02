@@ -5,7 +5,8 @@ import os
 from SuperGluePretrainedNetwork.models.superglue import SuperGlue
 from SuperGluePretrainedNetwork.models.superpoint import SuperPoint
 from SuperGluePretrainedNetwork.models.matching import Matching
-from SuperGluePretrainedNetwork.models.utils import read_image
+from SuperGluePretrainedNetwork.models.utils import read_image, make_matching_plot, plot_image_pair, plot_keypoints, plot_matches
+from PIL import Image
 
 
 class find_match:
@@ -14,9 +15,8 @@ class find_match:
         self.keypoints = {}
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.find_matches()
-
+        
     def find_matches(self):
-        print('cuda' if torch.cuda.is_available() else 'cpu')
         config = {
             'superpoint': {
                 'descriptor_dim': 256,
@@ -51,23 +51,27 @@ class find_match:
             glm_img, glm_input, glm_scales = read_image(
                 path=glm_img_path,
                 device=None,
-                resize=(640, 480),  # Maybe can try resizing images (640, 480)
+                resize=[786, 786],
                 rotation=0,
                 resize_float=False)
             
             best_match = None
             best_abi_kp = []
             best_glm_kp = []
+            best_abi_img = None
             curr_best_num_matches = 0
             
             for abi_img_path in abi_images:
                 abi_img, abi_input, abi_scales = read_image(
                     path=abi_img_path,
-                    device=None,
-                    resize=(640, 480),
+                    device=self.device,
+                    resize=[786, 786],
                     rotation=0,
                     resize_float=False)
-
+                
+                glm_input = glm_input.to(self.device)
+                abi_input = abi_input.to(self.device)
+                
                 predict = matcher({'image0': glm_input, 'image1': abi_input})
                 predict = {k: v[0].detach().cpu().numpy()
                            for k, v in predict.items()}
@@ -85,17 +89,16 @@ class find_match:
                     best_match = abi_img_path[7:]
                     best_glm_kp = matching_glm_kp
                     best_abi_kp = matching_abi_kp
+                    best_abi_img = abi_img
                 
             print((glm_img_path[7:], best_match))
-            print(best_abi_kp[0] if len(best_abi_kp) > 0 else "g",
-                  best_glm_kp[0] if len(best_glm_kp) > 0 else "f")
+            print(len(best_abi_kp) if len(best_abi_kp) > 0 else "G", 
+                  len(best_glm_kp) if len(best_glm_kp) > 0 else "F")
             
-            self.keypoints[(glm_img_path[7:], abi_img_path[7:])] = {
+            self.keypoints[(glm_img_path[7:], best_match)] = {
                 'abi_keypoints': best_abi_kp,
                 'glm_keypoints': best_glm_kp,
-                'matched_keypoints': []
+                'matched_keypoints': [(tuple(best_abi_kp[i]), tuple(best_glm_kp[i])) for i in range(len(best_abi_kp))]
             }
 
 
-# Example usage
-find_match('images')
