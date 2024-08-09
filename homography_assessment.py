@@ -20,7 +20,6 @@ class homography():
         sift_matched = superpoint_superglue_match.find_match(self.image_dir)
 
         for (pair, keypoints) in sift_matched.keypoints.items():
-            print(pair)
             abi_matched, glm_matched = zip(*keypoints.get("matched_keypoints"))
 
             # Find the homography matrix
@@ -73,7 +72,8 @@ class homography():
                          abi_pt, (0, 255, 255), 1)
 
             # Save the image with keypoints and lines
-            cv2.imwrite(f'predicted_kp/{matching_type}_RANSAC_{pair[0]}_{pair[1]}.png' if self.ransac_on else f'predicted_kp/{matching_type}_{pair[0]}_{pair[1]}.png', compiled_image_with_abi)
+            cv2.imwrite(
+                f'predicted_kp/{matching_type}_RANSAC_{pair[0]}_{pair[1]}.png' if self.ransac_on else f'predicted_kp/{matching_type}_{pair[0]}_{pair[1]}.png', compiled_image_with_abi)
 
             mean_error = np.mean(errors)/len(errors)
             # print(mean_error)
@@ -104,4 +104,4 @@ class homography():
             }
 
 
-homography('images', False)
+homography('images', True)

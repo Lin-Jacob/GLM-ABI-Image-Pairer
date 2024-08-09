@@ -9,13 +9,31 @@ from SuperGluePretrainedNetwork.models.utils import read_image, make_matching_pl
 from PIL import Image
 
 
+def save_match(img1 : str, img2 : str):
+    print(img1)
+    image1 = cv2.imread(img1)
+    image2 = cv2.imread(img2)
+    # Get the height of the taller image
+    height = max(image1.shape[0], image2.shape[0])
+    # Create a blank canvas with the height of the taller image and the combined width of both images
+    combined_image = np.zeros(
+        (height, image1.shape[1] + image2.shape[1], 3), dtype=np.uint8)
+    # Place the first image on the canvas
+    combined_image[:image1.shape[0], :image1.shape[1]] = image1
+    # Place the second image on the canvas
+    combined_image[:image2.shape[0], image1.shape[1]
+        : image1.shape[1] + image2.shape[1]] = image2
+    output_path = os.path.join(
+        'matched_output', f'{os.path.basename(img1.replace("images/",""))}_match_{os.path.basename(img2.replace("images/",""))}.png')
+    cv2.imwrite(output_path, combined_image)
+    
 class find_match:
     def __init__(self, image_file) -> None:
         self.image_dir = image_file
         self.keypoints = {}
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.find_matches()
-        
+
     def find_matches(self):
         config = {
             'superpoint': {
@@ -90,7 +108,9 @@ class find_match:
                     best_glm_kp = matching_glm_kp
                     best_abi_kp = matching_abi_kp
                     best_abi_img = abi_img
-                
+                    
+            save_match(f'images/{glm_img_path[7:]}', f'images/{best_match}')
+            
             print((glm_img_path[7:], best_match))
             print(len(best_abi_kp) if len(best_abi_kp) > 0 else "G", 
                   len(best_glm_kp) if len(best_glm_kp) > 0 else "F")

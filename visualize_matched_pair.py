@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 output_dir = "matched_output"
 
-matched_images = [file for file in os.listdir(output_dir) if file.endswith(".jpg")]
+matched_images = [file for file in os.listdir(output_dir) if file.endswith(".png")]
 
 html_template = """
 <!DOCTYPE html>
