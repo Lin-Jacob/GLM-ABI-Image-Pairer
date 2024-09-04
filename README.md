@@ -1,4 +1,5 @@
-# NOAA_Internship
+# GLM-ABI-Image-Pairer
+Hello, this was part of my internship with CISESS/ESSIC and NOAA to develope a satilite image pairer for the GLM and ABI instruments on the GOES satilite. To develope intuition about the project, please read over the report folder and read the write-up about this project. 
 
 # Libraries
 To replicate my exact setup, please have the following libraries and their versions:
